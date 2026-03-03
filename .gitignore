@@ -1,0 +1,71 @@
+# ─── PYTHON ───────────────────────────────────────────────
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+.pytest_cache/
+.mypy_cache/
+
+# ─── AI MODELS (too large for GitHub) ────────────────────
+# T5 model cache (downloaded automatically on first run)
+*.bin
+*.safetensors
+*.gguf
+models/cache/
+transformers_cache/
+huggingface_cache/
+
+# ─── ENVIRONMENT ──────────────────────────────────────────
+.env
+.env.local
+.env.production
+*.env
+
+# ─── FLUTTER ──────────────────────────────────────────────
+frontend/ai_office_app/.dart_tool/
+frontend/ai_office_app/.flutter-plugins
+frontend/ai_office_app/.flutter-plugins-dependencies
+frontend/ai_office_app/build/
+frontend/ai_office_app/.packages
+frontend/ai_office_app/pubspec.lock
+
+# ─── ANDROID ──────────────────────────────────────────────
+frontend/ai_office_app/android/.gradle/
+frontend/ai_office_app/android/local.properties
+frontend/ai_office_app/android/key.properties
+frontend/ai_office_app/android/app/debug.keystore
+frontend/ai_office_app/android/app/release.keystore
+frontend/ai_office_app/android/captures/
+
+# ─── IOS ──────────────────────────────────────────────────
+frontend/ai_office_app/ios/Pods/
+frontend/ai_office_app/ios/.symlinks/
+frontend/ai_office_app/ios/Flutter/Flutter.framework
+frontend/ai_office_app/ios/Flutter/Flutter.podspec
+
+# ─── VS CODE ──────────────────────────────────────────────
+.vscode/
+*.code-workspace
+
+# ─── WINDOWS ──────────────────────────────────────────────
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
+
+# ─── TEST FILES ───────────────────────────────────────────
+test_sample.pdf
+*.mp3
+*.wav
+*.m4a
+*.ogg
+
+# ─── LOGS ─────────────────────────────────────────────────
+*.log
+logs/
