@@ -102,7 +102,9 @@ ai_office_assistant/
 │   │   ├── summarize.py         # PDF summarization
 │   │   ├── meeting.py           # Meeting transcription
 │   │   └── email_gen.py         # Email generation
-│   ├── models/
+│   ├── prompt/
+│   │   └── pdf_summarise.py     # Prompt 
+|   ├── models/
 │   │   └── t5_model.py          # T5 model loader
 │   └── utils/
 │       ├── pdf_extractor.py     # PDF text extraction
