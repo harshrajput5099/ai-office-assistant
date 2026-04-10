@@ -8,7 +8,7 @@ A fully offline AI-powered mobile app that summarizes PDFs, transcribes meetings
 
 | Home Screen | PDF Summarizer | Meeting Notes | Email Generator |
 |---|---|---|---|
-| ✅ Working  | ✅ Working | Coming soon | Coming soon |
+| ✅ Working  | ✅ Working | Coming soon | ✅ Working |
 
 ---
 
@@ -18,7 +18,7 @@ A fully offline AI-powered mobile app that summarizes PDFs, transcribes meetings
 |---|---|---|
 | PDF Summarization | T5-small / Mistral 7B | ✅ Working |
 | Meeting Transcription | Whisper (faster-whisper) | 🔲 Phase 2 |
-| Email Generation | Mistral 7B via Ollama | 🔲 Phase 2 |
+| Email Generation | Mistral 7B via Ollama | ✅ Working |
 | Flutter Mobile UI | Flutter + Dart | ✅ Working |
 | Offline Processing | All models run locally | ✅ Working |
 | Export & Share Output | Clipboard + File Export (.txt, .pdf, .docx) | ✅ Working |
@@ -154,7 +154,8 @@ Find your IP with: `ipconfig` (Windows)
 - **Phase 1** ✅ — PDF summarization + Flutter UI
 - **Phase 2** ✅ — Export Summarization (.txt, .pdf, .docx)
 - **Phase 3** 🔲 — Meeting transcription (Whisper)
-- **Phase 4** 🔲 — Email polish + deployment
+- **Phase 4** ✅ — Email polish
+- **Phase 5** 🔲 — Deployment
 
 ---
 
