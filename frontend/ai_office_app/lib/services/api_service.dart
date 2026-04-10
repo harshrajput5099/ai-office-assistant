@@ -7,6 +7,7 @@ class ApiService {
   static const String baseUrl = 'http://192.168.1.8:8000/api';
 
   // ─── PDF SUMMARIZE ────────────────────────────────────────
+  // UNCHANGED — already returns Map<String, dynamic> ✅
   static Future<Map<String, dynamic>> summarizePdf(
       File pdfFile, {
         bool useMistral = false,
@@ -29,6 +30,7 @@ class ApiService {
   }
 
   // ─── MEETING TRANSCRIBE ───────────────────────────────────
+  // UNCHANGED ✅
   static Future<Map<String, dynamic>> transcribeMeeting(File audioFile) async {
     var request = http.MultipartRequest(
       'POST',
@@ -48,6 +50,7 @@ class ApiService {
   }
 
   // ─── EMAIL GENERATE ───────────────────────────────────────
+  // UNCHANGED ✅
   static Future<String> generateEmail({
     required String purpose,
     required String recipientRole,
@@ -72,6 +75,52 @@ class ApiService {
     } else {
       final error = jsonDecode(response.body);
       throw Exception(error['detail'] ?? 'Email generation failed');
+    }
+  }
+
+  // ─── EXPORT: WORD (.docx) ─────────────────────────────────
+  // NEW — calls /api/export/word, returns raw bytes for saving
+  static Future<List<int>> exportAsWord({
+    required String summary,
+    required String filename,
+  }) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/export/word'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'summary': summary,
+        'filename': filename,
+      }),
+    ).timeout(const Duration(seconds: 30));
+
+    if (response.statusCode == 200) {
+      return response.bodyBytes; // raw .docx bytes → save to file
+    } else {
+      final error = jsonDecode(response.body);
+      throw Exception(error['detail'] ?? 'Word export failed');
+    }
+  }
+
+  // ─── EXPORT: PDF ──────────────────────────────────────────
+  // NEW — calls /api/export/pdf, returns raw bytes for saving
+  static Future<List<int>> exportAsPdf({
+    required String summary,
+    required String filename,
+  }) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/export/pdf'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'summary': summary,
+        'filename': filename,
+      }),
+    ).timeout(const Duration(seconds: 120));
+
+    if (response.statusCode == 200) {
+      return response.bodyBytes; // raw .pdf bytes → save to file
+    } else {
+      final error = jsonDecode(response.body);
+      throw Exception(error['detail'] ?? 'PDF export failed');
     }
   }
 }

@@ -1,0 +1,25 @@
+You are an expert academic document summarizer.
+
+FIRST — Identify the correct document type:
+- 'journal article'    if it has Abstract, Vol., No., DOI, journal name
+- 'conference paper'   if it mentions AAAI, NeurIPS, ICML, CVPR etc.
+- 'textbook chapter'   ONLY if it has numbered exercises or theorems
+- 'technical report'   for everything else
+
+STRICT RULES:
+1. NEVER write 'textbook' for a journal article
+2. NEVER write 'Chapters Covered' for a paper that has sections not chapters
+3. Preserve ALL technical terms exactly (e.g. 'Bhattacharyya distance', 'FedALT')
+4. Include specific results and numbers (e.g. '67.55 average score')
+5. Do NOT invent content not in the text
+
+OUTPUT FORMAT (use exactly this structure):
+Title: [exact paper/document title]
+Type: [document type from above]
+Overview: [2-3 sentences — what this document is about]
+Key Contributions: [3-5 bullet points of main ideas]
+Main Findings: [specific results with numbers if available]
+Conclusion: [1-2 sentences on significance or implications]
+
+Text:
+{text}

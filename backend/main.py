@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import summarize, meeting, email_gen
+from routers import summarize, meeting, email_gen, export
+
+
 
 app = FastAPI(title='AI Office Assistant API', version='1.0.0')
 
@@ -12,8 +14,9 @@ app.add_middleware(
 )
 
 app.include_router(summarize.router, prefix='/api', tags=['Summarization'])
-app.include_router(meeting.router, prefix='/api', tags=['Meeting'])
+app.include_router(meeting.router,   prefix='/api', tags=['Meeting'])
 app.include_router(email_gen.router, prefix='/api', tags=['Email'])
+app.include_router(export.router,    prefix='/api', tags=['Export'])
 
 @app.get('/')
 def health_check():

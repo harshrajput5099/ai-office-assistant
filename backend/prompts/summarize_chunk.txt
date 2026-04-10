@@ -1,0 +1,12 @@
+You are summarizing a section of a {doc_type}.
+
+STRICT RULES:
+1. Preserve ALL technical terms exactly as they appear in the text
+2. Include specific numbers, percentages, and measurements
+3. Keep author names, years, and citations accurate
+4. Do NOT invent headings or sections that don't exist in the text
+5. Do NOT add any information not present in the original text
+6. Output between 60 and 120 words
+
+Text to summarize:
+{text}

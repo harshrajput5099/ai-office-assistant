@@ -5,6 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../constants/app_colors.dart';
 import '../services/api_service.dart';
+import '../widgets/export_panel.dart';
 
 class PdfScreen extends StatefulWidget {
   const PdfScreen({super.key});
@@ -21,6 +22,8 @@ class _PdfScreenState extends State<PdfScreen>
   String? _modelUsed;
   String? _error;
   String? _selectedFileName;
+  String? _docType;  // ← CHANGE 2a: was commented out
+  String? _fileName; // ← CHANGE 2b: was commented out
   late AnimationController _resultController;
   late Animation<double> _resultAnim;
 
@@ -53,13 +56,14 @@ class _PdfScreenState extends State<PdfScreen>
     });
     try {
       File file = File(result.files.single.path!);
-      final response =
-      await ApiService.summarizePdf(file, useMistral: _useMistral);
+      _fileName = result.files.single.name; // ← CHANGE 3a: was commented out
+      final response = await ApiService.summarizePdf(file, useMistral: _useMistral);
       setState(() {
-        _summary = response['summary'] as String?;
+        _summary    = response['summary'] as String?;
+        _docType    = response['doc_type'] as String? ?? 'document'; // ← CHANGE 3b: was commented out
         _chunkCount = response['chunk_count'] as int?;
-        _modelUsed = response['model_used'] as String?;
-        _isLoading = false;
+        _modelUsed  = response['model_used'] as String?;
+        _isLoading  = false;
       });
       _resultController.forward(from: 0);
     } catch (e) {
@@ -304,6 +308,8 @@ class _PdfScreenState extends State<PdfScreen>
         ],
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+
+        // ── Header row: icon + title + copy button ──────────────
         Row(children: [
           const Icon(Icons.summarize_rounded,
               color: AppColors.primary, size: 20),
@@ -320,19 +326,48 @@ class _PdfScreenState extends State<PdfScreen>
             onPressed: () {
               Clipboard.setData(ClipboardData(text: _summary!));
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content:
-                Text('Copied!', style: GoogleFonts.inter()),
+                content: Text('Copied!', style: GoogleFonts.inter()),
                 backgroundColor: AppColors.accent,
                 duration: const Duration(seconds: 2),
               ));
             },
           ),
         ]),
+
         const Divider(height: 16),
+
+        // ── CHANGE 4a: doc type badge (only shown when detected) ─
+        if (_docType != null && _docType!.isNotEmpty) ...[
+          Container(
+            margin: const EdgeInsets.only(bottom: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: AppColors.primary.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: AppColors.primary.withOpacity(0.3),
+              ),
+            ),
+            child: Text(
+              _docType!.toUpperCase(),
+              style: GoogleFonts.inter(
+                fontSize: 10,
+                fontWeight: FontWeight.w700,
+                color: AppColors.primary,
+                letterSpacing: 0.8,
+              ),
+            ),
+          ),
+        ],
+
+        // ── Summary text ─────────────────────────────────────────
         Text(_summary!,
             style: GoogleFonts.inter(
                 fontSize: 14, color: AppColors.textDark, height: 1.6)),
+
         const SizedBox(height: 12),
+
+        // ── Existing chips: chunk count + model used ─────────────
         Wrap(spacing: 8, children: [
           _Chip(
               label: '${_chunkCount ?? 0} chunks',
@@ -341,6 +376,18 @@ class _PdfScreenState extends State<PdfScreen>
               label: _modelUsed ?? 't5-small',
               color: AppColors.accent),
         ]),
+
+        // ── CHANGE 4b: Export Panel below the chips ──────────────
+        // Shows 3 export buttons: Word / PDF / Text
+        // Only rendered when summary + filename are both available
+        if (_fileName != null) ...[
+          const SizedBox(height: 16),
+          ExportPanel(
+            summary: _summary!,
+            filename: _fileName!,
+          ),
+        ],
+
       ]),
     );
   }
