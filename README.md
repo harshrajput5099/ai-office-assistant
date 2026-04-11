@@ -8,7 +8,7 @@ A fully offline AI-powered mobile app that summarizes PDFs, transcribes meetings
 
 | Home Screen | PDF Summarizer | Meeting Notes | Email Generator |
 |---|---|---|---|
-| ✅ Working  | ✅ Working | Coming soon | ✅ Working |
+| ✅ Working  | ✅ Working | ✅ Working | ✅ Working |
 
 ---
 
