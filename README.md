@@ -66,6 +66,7 @@ python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ### 4. Flutter Setup
 ```bash
 cd frontend/ai_office_app
+flutter clean
 flutter pub get
 flutter run
 ```
