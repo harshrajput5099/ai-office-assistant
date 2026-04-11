@@ -17,7 +17,7 @@ A fully offline AI-powered mobile app that summarizes PDFs, transcribes meetings
 | Feature | Technology | Status |
 |---|---|---|
 | PDF Summarization | T5-small / Mistral 7B | ✅ Working |
-| Meeting Transcription | Whisper (faster-whisper) | 🔲 Phase 2 |
+| Meeting Transcription | Whisper (faster-whisper) | ✅ Working |
 | Email Generation | Mistral 7B via Ollama | ✅ Working |
 | Flutter Mobile UI | Flutter + Dart | ✅ Working |
 | Offline Processing | All models run locally | ✅ Working |
