@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:file_picker/file_picker.dart';
@@ -22,8 +21,8 @@ class _PdfScreenState extends State<PdfScreen>
   String? _modelUsed;
   String? _error;
   String? _selectedFileName;
-  String? _docType;  // ← CHANGE 2a: was commented out
-  String? _fileName; // ← CHANGE 2b: was commented out
+  String? _docType;
+  String? _fileName;
   late AnimationController _resultController;
   late Animation<double> _resultAnim;
 
@@ -46,21 +45,35 @@ class _PdfScreenState extends State<PdfScreen>
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['pdf'],
+      withData: true, // ← required for web: loads bytes directly
     );
     if (result == null) return;
+
+    final fileName = result.files.single.name;
+    final fileBytes = result.files.single.bytes; // Uint8List — works on web & mobile
+
+    if (fileBytes == null) {
+      setState(() => _error = 'Could not read file. Please try again.');
+      return;
+    }
+
     setState(() {
       _isLoading = true;
       _error = null;
       _summary = null;
-      _selectedFileName = result.files.single.name;
+      _selectedFileName = fileName;
+      _fileName = fileName;
     });
+
     try {
-      File file = File(result.files.single.path!);
-      _fileName = result.files.single.name; // ← CHANGE 3a: was commented out
-      final response = await ApiService.summarizePdf(file, useMistral: _useMistral);
+      final response = await ApiService.summarizePdf(
+        fileBytes,
+        fileName,
+        useMistral: _useMistral,
+      );
       setState(() {
         _summary    = response['summary'] as String?;
-        _docType    = response['doc_type'] as String? ?? 'document'; // ← CHANGE 3b: was commented out
+        _docType    = response['doc_type'] as String? ?? 'document';
         _chunkCount = response['chunk_count'] as int?;
         _modelUsed  = response['model_used'] as String?;
         _isLoading  = false;
@@ -309,7 +322,7 @@ class _PdfScreenState extends State<PdfScreen>
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
 
-        // ── Header row: icon + title + copy button ──────────────
+        // ── Header row: icon + title + copy button ───────────────
         Row(children: [
           const Icon(Icons.summarize_rounded,
               color: AppColors.primary, size: 20),
@@ -336,7 +349,7 @@ class _PdfScreenState extends State<PdfScreen>
 
         const Divider(height: 16),
 
-        // ── CHANGE 4a: doc type badge (only shown when detected) ─
+        // ── Doc type badge ───────────────────────────────────────
         if (_docType != null && _docType!.isNotEmpty) ...[
           Container(
             margin: const EdgeInsets.only(bottom: 10),
@@ -367,7 +380,7 @@ class _PdfScreenState extends State<PdfScreen>
 
         const SizedBox(height: 12),
 
-        // ── Existing chips: chunk count + model used ─────────────
+        // ── Chips: chunk count + model used ─────────────────────
         Wrap(spacing: 8, children: [
           _Chip(
               label: '${_chunkCount ?? 0} chunks',
@@ -377,9 +390,7 @@ class _PdfScreenState extends State<PdfScreen>
               color: AppColors.accent),
         ]),
 
-        // ── CHANGE 4b: Export Panel below the chips ──────────────
-        // Shows 3 export buttons: Word / PDF / Text
-        // Only rendered when summary + filename are both available
+        // ── Export Panel ─────────────────────────────────────────
         if (_fileName != null) ...[
           const SizedBox(height: 16),
           ExportPanel(
@@ -448,7 +459,7 @@ class _Chip extends StatelessWidget {
       ),
       child: Text(label,
           style: GoogleFonts.inter(
-              fontSize: 11, color: color, fontWeight: FontWeight.w500)),
+              fontSize: 12, color: color, fontWeight: FontWeight.w500)),
     );
   }
 }

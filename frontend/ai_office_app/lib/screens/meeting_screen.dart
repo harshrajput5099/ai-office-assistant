@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:file_picker/file_picker.dart';
@@ -41,18 +40,28 @@ class _MeetingScreenState extends State<MeetingScreen>
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['mp3', 'wav', 'm4a', 'ogg'],
+      withData: true, // ← required for web: loads bytes directly
     );
     if (result == null) return;
+
+    final fileName = result.files.single.name;
+    final fileBytes = result.files.single.bytes; // Uint8List — works on web & mobile
+
+    if (fileBytes == null) {
+      setState(() => _error = 'Could not read file. Please try again.');
+      return;
+    }
+
     setState(() {
       _isLoading = true;
       _error = null;
       _transcript = null;
       _summary = null;
-      _selectedFileName = result.files.single.name;
+      _selectedFileName = fileName;
     });
+
     try {
-      File file = File(result.files.single.path!);
-      final response = await ApiService.transcribeMeeting(file);
+      final response = await ApiService.transcribeMeeting(fileBytes, fileName);
       setState(() {
         _transcript = response['transcript'] as String?;
         _summary = response['summary'] as String?;

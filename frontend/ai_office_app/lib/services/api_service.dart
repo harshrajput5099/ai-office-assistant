@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:typed_data';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -7,7 +7,8 @@ class ApiService {
 
   // ─── PDF SUMMARIZATION ────────────────────────────────────────
   static Future<Map<String, dynamic>> summarizePdf(
-      File pdfFile, {
+      Uint8List fileBytes,
+      String fileName, {
         bool useMistral = false,
       }) async {
     var request = http.MultipartRequest(
@@ -15,7 +16,7 @@ class ApiService {
       Uri.parse('$baseUrl/summarize-pdf?use_mistral=$useMistral'),
     );
     request.files.add(
-      await http.MultipartFile.fromPath('file', pdfFile.path),
+      http.MultipartFile.fromBytes('file', fileBytes, filename: fileName),
     );
     var response = await request.send();
     var body = await response.stream.bytesToString();
@@ -27,16 +28,17 @@ class ApiService {
     }
   }
 
-  // ─── MEETING TRANSCRIBE ───────────────────────────────────
-  // UPDATED: field name 'file' → 'audio' to match backend parameter
-  // UPDATED: returns full Map (transcript + notes + language)
-  static Future<Map<String, dynamic>> transcribeMeeting(File audioFile) async {
+  // ─── MEETING TRANSCRIBE ───────────────────────────────────────
+  static Future<Map<String, dynamic>> transcribeMeeting(
+      Uint8List audioBytes,
+      String fileName,
+      ) async {
     var request = http.MultipartRequest(
       'POST',
       Uri.parse('$baseUrl/transcribe-meeting'),
     );
     request.files.add(
-      await http.MultipartFile.fromPath('audio', audioFile.path), // 'audio' not 'file'
+      http.MultipartFile.fromBytes('audio', audioBytes, filename: fileName),
     );
     var response = await request.send();
     var body = await response.stream.bytesToString();
@@ -49,15 +51,13 @@ class ApiService {
     }
   }
 
-  // ─── EMAIL GENERATE ───────────────────────────────────────
-  // UPDATED: call_to_action → required_response (matches backend)
-  // UPDATED: returns Map<String, dynamic> instead of String
+  // ─── EMAIL GENERATE ───────────────────────────────────────────
   static Future<Map<String, dynamic>> generateEmail({
     required String purpose,
     required String recipientRole,
     required String tone,
     required List<String> keyPoints,
-    required String requiredResponse,   // was callToAction
+    required String requiredResponse,
   }) async {
     final response = await http.post(
       Uri.parse('$baseUrl/generate-email'),
@@ -66,8 +66,8 @@ class ApiService {
         'purpose':           purpose,
         'recipient_role':    recipientRole,
         'tone':              tone,
-        'key_points':        keyPoints,          // still List<String> ✅
-        'required_response': requiredResponse,   // was 'call_to_action'
+        'key_points':        keyPoints,
+        'required_response': requiredResponse,
       }),
     );
     if (response.statusCode == 200) {
@@ -79,7 +79,7 @@ class ApiService {
     }
   }
 
-  // ─── EXPORT: WORD (.docx) ────────────────────────────────
+  // ─── EXPORT: WORD (.docx) ─────────────────────────────────────
   static Future<List<int>> exportAsWord({
     required String summary,
     required String filename,
@@ -98,7 +98,7 @@ class ApiService {
     }
   }
 
-  // ─── EXPORT: PDF ─────────────────────────────────────────
+  // ─── EXPORT: PDF ──────────────────────────────────────────────
   static Future<List<int>> exportAsPdf({
     required String summary,
     required String filename,
