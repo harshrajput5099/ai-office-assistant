@@ -25,7 +25,7 @@ def test_with_mistral(filepath: str):
     print(f"{BLUE}ℹ️  File size: {file_size_kb:.1f} KB{RESET}")
     print(f"{YELLOW}⏳ Using Mistral — may take 1-3 minutes for large files...{RESET}")
 
-    # Check Ollama first
+    # Check Ollama connection first 
     try:
         r = requests.get("http://localhost:11434", timeout=3)
     except Exception:

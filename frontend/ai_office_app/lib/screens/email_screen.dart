@@ -61,15 +61,17 @@ class _EmailScreenState extends State<EmailScreen>
           .split('\n')
           .where((l) => l.trim().isNotEmpty)
           .toList();
-      final email = await ApiService.generateEmail(
+      // FIX 1: renamed callToAction → requiredResponse to match ApiService signature
+      // FIX 2: extract String from the returned Map<String, dynamic> via result['email']
+      final result = await ApiService.generateEmail(
         purpose: _purposeController.text,
         recipientRole: _recipientController.text,
         tone: _selectedTone,
         keyPoints: keyPoints,
-        callToAction: _callToActionController.text,
+        requiredResponse: _callToActionController.text,
       );
       setState(() {
-        _generatedEmail = email;
+        _generatedEmail = result['email'] as String;
         _isLoading = false;
       });
       _resultController.forward(from: 0);
@@ -339,7 +341,7 @@ class _EmailScreenState extends State<EmailScreen>
       child: Column(children: [
         const CircularProgressIndicator(color: AppColors.orange),
         const SizedBox(height: 16),
-        Text('Mistral is drafting your email...',
+        Text('Drafting your email...',
             style:
             GoogleFonts.inter(fontSize: 14, color: AppColors.textLight),
             textAlign: TextAlign.center),
@@ -412,11 +414,9 @@ class _EmailScreenState extends State<EmailScreen>
           Expanded(
             child: OutlinedButton.icon(
               onPressed: () {
-                Clipboard.setData(
-                    ClipboardData(text: _generatedEmail!));
+                Clipboard.setData(ClipboardData(text: _generatedEmail!));
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content:
-                  Text('Copied!', style: GoogleFonts.inter()),
+                  content: Text('Copied!', style: GoogleFonts.inter()),
                   backgroundColor: AppColors.accent,
                   duration: const Duration(seconds: 2),
                 ));

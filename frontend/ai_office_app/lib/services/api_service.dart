@@ -3,11 +3,9 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  // Change this to your PC's local IP address
-  static const String baseUrl = 'http://192.168.1.8:8000/api';
+  static const String baseUrl = 'http://192.168.1.6:8000/api';
 
-  // ─── PDF SUMMARIZE ────────────────────────────────────────
-  // UNCHANGED — already returns Map<String, dynamic> ✅
+  // ─── PDF SUMMARIZATION ────────────────────────────────────────
   static Future<Map<String, dynamic>> summarizePdf(
       File pdfFile, {
         bool useMistral = false,
@@ -30,19 +28,21 @@ class ApiService {
   }
 
   // ─── MEETING TRANSCRIBE ───────────────────────────────────
-  // UNCHANGED ✅
+  // UPDATED: field name 'file' → 'audio' to match backend parameter
+  // UPDATED: returns full Map (transcript + notes + language)
   static Future<Map<String, dynamic>> transcribeMeeting(File audioFile) async {
     var request = http.MultipartRequest(
       'POST',
       Uri.parse('$baseUrl/transcribe-meeting'),
     );
     request.files.add(
-      await http.MultipartFile.fromPath('file', audioFile.path),
+      await http.MultipartFile.fromPath('audio', audioFile.path), // 'audio' not 'file'
     );
     var response = await request.send();
     var body = await response.stream.bytesToString();
     if (response.statusCode == 200) {
       return jsonDecode(body) as Map<String, dynamic>;
+      // Returns: { 'transcript': '...', 'notes': '...', 'language': 'en' }
     } else {
       final error = jsonDecode(body);
       throw Exception(error['detail'] ?? 'Meeting transcription failed');
@@ -50,36 +50,36 @@ class ApiService {
   }
 
   // ─── EMAIL GENERATE ───────────────────────────────────────
-  // UNCHANGED ✅
-  static Future<String> generateEmail({
+  // UPDATED: call_to_action → required_response (matches backend)
+  // UPDATED: returns Map<String, dynamic> instead of String
+  static Future<Map<String, dynamic>> generateEmail({
     required String purpose,
     required String recipientRole,
     required String tone,
     required List<String> keyPoints,
-    required String callToAction,
+    required String requiredResponse,   // was callToAction
   }) async {
     final response = await http.post(
       Uri.parse('$baseUrl/generate-email'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
-        'purpose': purpose,
-        'recipient_role': recipientRole,
-        'tone': tone,
-        'key_points': keyPoints,
-        'call_to_action': callToAction,
+        'purpose':           purpose,
+        'recipient_role':    recipientRole,
+        'tone':              tone,
+        'key_points':        keyPoints,          // still List<String> ✅
+        'required_response': requiredResponse,   // was 'call_to_action'
       }),
     );
     if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      return data['email'] as String;
+      return jsonDecode(response.body) as Map<String, dynamic>;
+      // Returns: { 'email': '...', 'tone': 'formal' }
     } else {
       final error = jsonDecode(response.body);
       throw Exception(error['detail'] ?? 'Email generation failed');
     }
   }
 
-  // ─── EXPORT: WORD (.docx) ─────────────────────────────────
-  // NEW — calls /api/export/word, returns raw bytes for saving
+  // ─── EXPORT: WORD (.docx) ────────────────────────────────
   static Future<List<int>> exportAsWord({
     required String summary,
     required String filename,
@@ -87,22 +87,18 @@ class ApiService {
     final response = await http.post(
       Uri.parse('$baseUrl/export/word'),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'summary': summary,
-        'filename': filename,
-      }),
+      body: jsonEncode({'summary': summary, 'filename': filename}),
     ).timeout(const Duration(seconds: 30));
 
     if (response.statusCode == 200) {
-      return response.bodyBytes; // raw .docx bytes → save to file
+      return response.bodyBytes;
     } else {
       final error = jsonDecode(response.body);
       throw Exception(error['detail'] ?? 'Word export failed');
     }
   }
 
-  // ─── EXPORT: PDF ──────────────────────────────────────────
-  // NEW — calls /api/export/pdf, returns raw bytes for saving
+  // ─── EXPORT: PDF ─────────────────────────────────────────
   static Future<List<int>> exportAsPdf({
     required String summary,
     required String filename,
@@ -110,14 +106,11 @@ class ApiService {
     final response = await http.post(
       Uri.parse('$baseUrl/export/pdf'),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'summary': summary,
-        'filename': filename,
-      }),
+      body: jsonEncode({'summary': summary, 'filename': filename}),
     ).timeout(const Duration(seconds: 120));
 
     if (response.statusCode == 200) {
-      return response.bodyBytes; // raw .pdf bytes → save to file
+      return response.bodyBytes;
     } else {
       final error = jsonDecode(response.body);
       throw Exception(error['detail'] ?? 'PDF export failed');
