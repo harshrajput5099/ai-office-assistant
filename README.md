@@ -154,7 +154,7 @@ Find your IP with: `ipconfig` (Windows)
 - **Phase 0** ✅ — Environment setup
 - **Phase 1** ✅ — PDF summarization + Flutter UI
 - **Phase 2** ✅ — Export Summarization (.txt, .pdf, .docx)
-- **Phase 3** 🔲 — Meeting transcription (Whisper)
+- **Phase 3** ✅ — Meeting transcription (Whisper)
 - **Phase 4** ✅ — Email polish
 - **Phase 5** 🔲 — Deployment
 
