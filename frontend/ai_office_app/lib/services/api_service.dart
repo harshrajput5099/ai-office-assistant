@@ -1,10 +1,19 @@
+import 'dart:io';
 import 'dart:typed_data';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter/foundation.dart';
 
 class ApiService {
-  static const String baseUrl = 'http://192.168.1.6:8000/api';
-
+  static String get baseUrl {
+    if (kIsWeb) {
+      return 'http://localhost:8000/api';       // Chrome / web browser
+    }
+    if (Platform.isAndroid) {
+      return 'http://10.0.2.2:8000/api';        // Android emulator
+    }
+    return 'http://192.168.1.8:8000/api';       // Real phone on WiFi
+  }
   // ─── PDF SUMMARIZATION ────────────────────────────────────────
   static Future<Map<String, dynamic>> summarizePdf(
       Uint8List fileBytes,
