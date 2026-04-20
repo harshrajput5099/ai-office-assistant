@@ -109,8 +109,8 @@ ai_office_assistant/
 │   │   └── email_friendly.py
 │   │   └── email_semiformal.py
 │   │   └── meeting_notes.py
-│   │   └── pdf_summarise.py
-│   │   └── pdf_summarise.py     # Prompt 
+│   │   └── summarize_academic.py
+│   │   └── summarise_chunk.py     
 |   ├── models/
 │   │   └── t5_model.py          # T5 model loader
 │   └── utils/
