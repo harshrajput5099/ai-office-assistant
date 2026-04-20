@@ -107,7 +107,7 @@ ai_office_assistant/
 │   ├── prompt/
 │   │   └── email_formal.py
 │   │   └── email_friendly.py
-│   │   └── pdf_summarise.py
+│   │   └── email_semiformal.py
 │   │   └── pdf_summarise.py
 │   │   └── pdf_summarise.py
 │   │   └── pdf_summarise.py     # Prompt 
