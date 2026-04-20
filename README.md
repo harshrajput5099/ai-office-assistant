@@ -106,7 +106,7 @@ ai_office_assistant/
 │   │   └── email_gen.py         # Email generation
 │   ├── prompt/
 │   │   └── email_formal.py
-│   │   └── pdf_summarise.py
+│   │   └── email_friendly.py
 │   │   └── pdf_summarise.py
 │   │   └── pdf_summarise.py
 │   │   └── pdf_summarise.py
