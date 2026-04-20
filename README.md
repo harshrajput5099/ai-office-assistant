@@ -105,6 +105,11 @@ ai_office_assistant/
 │   │   ├── meeting.py           # Meeting transcription
 │   │   └── email_gen.py         # Email generation
 │   ├── prompt/
+│   │   └── email_formal.py
+│   │   └── pdf_summarise.py
+│   │   └── pdf_summarise.py
+│   │   └── pdf_summarise.py
+│   │   └── pdf_summarise.py
 │   │   └── pdf_summarise.py     # Prompt 
 |   ├── models/
 │   │   └── t5_model.py          # T5 model loader
