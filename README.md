@@ -21,7 +21,7 @@ A fully offline AI-powered mobile app that summarizes PDFs, transcribes meetings
 | Email Generation | Mistral 7B via Ollama | ✅ Working |
 | Flutter Mobile UI | Flutter + Dart | ✅ Working |
 | Offline Processing | All models run locally | ✅ Working |
-| Export & Share Output | Clipboard + File Export (.txt, .pdf, .docx) | ✅ Working |
+| Export & Share Output | File Export (.txt, .pdf, .docx) | ✅ Working |
 
 ---
 
