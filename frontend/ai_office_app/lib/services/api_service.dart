@@ -241,4 +241,4 @@ class ApiService {
       throw Exception(err['detail'] ?? 'Pipeline failed');
     }
   }
-}
+} 
