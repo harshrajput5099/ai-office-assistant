@@ -40,12 +40,12 @@ class _MeetingScreenState extends State<MeetingScreen>
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['mp3', 'wav', 'm4a', 'ogg'],
-      withData: true, // ← required for web: loads bytes directly
+      withData: true,
     );
     if (result == null) return;
 
     final fileName = result.files.single.name;
-    final fileBytes = result.files.single.bytes; // Uint8List — works on web & mobile
+    final fileBytes = result.files.single.bytes;
 
     if (fileBytes == null) {
       setState(() => _error = 'Could not read file. Please try again.');
@@ -67,6 +67,12 @@ class _MeetingScreenState extends State<MeetingScreen>
         _summary = response['summary'] as String?;
         _isLoading = false;
       });
+      // ── Save to history (fire-and-forget) ──────────────────────
+      ApiService.addHistory(
+        type: 'meeting',
+        title: _selectedFileName ?? 'Meeting Notes',
+        content: _summary ?? _transcript ?? '',
+      );
       _resultController.forward(from: 0);
     } catch (e) {
       setState(() {

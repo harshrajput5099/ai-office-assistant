@@ -61,8 +61,6 @@ class _EmailScreenState extends State<EmailScreen>
           .split('\n')
           .where((l) => l.trim().isNotEmpty)
           .toList();
-      // FIX 1: renamed callToAction → requiredResponse to match ApiService signature
-      // FIX 2: extract String from the returned Map<String, dynamic> via result['email']
       final result = await ApiService.generateEmail(
         purpose: _purposeController.text,
         recipientRole: _recipientController.text,
@@ -74,6 +72,12 @@ class _EmailScreenState extends State<EmailScreen>
         _generatedEmail = result['email'] as String;
         _isLoading = false;
       });
+      // ── Save to history (fire-and-forget) ──────────────────────
+      ApiService.addHistory(
+        type: 'email',
+        title: _purposeController.text.trim(),
+        content: _generatedEmail!,
+      );
       _resultController.forward(from: 0);
     } catch (e) {
       setState(() {

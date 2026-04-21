@@ -45,12 +45,12 @@ class _PdfScreenState extends State<PdfScreen>
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['pdf'],
-      withData: true, // ← required for web: loads bytes directly
+      withData: true,
     );
     if (result == null) return;
 
     final fileName = result.files.single.name;
-    final fileBytes = result.files.single.bytes; // Uint8List — works on web & mobile
+    final fileBytes = result.files.single.bytes;
 
     if (fileBytes == null) {
       setState(() => _error = 'Could not read file. Please try again.');
@@ -78,6 +78,12 @@ class _PdfScreenState extends State<PdfScreen>
         _modelUsed  = response['model_used'] as String?;
         _isLoading  = false;
       });
+      // ── Save to history (fire-and-forget) ──────────────────────
+      ApiService.addHistory(
+        type: 'summary',
+        title: _fileName ?? 'PDF Summary',
+        content: _summary!,
+      );
       _resultController.forward(from: 0);
     } catch (e) {
       setState(() {
@@ -322,7 +328,6 @@ class _PdfScreenState extends State<PdfScreen>
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
 
-        // ── Header row: icon + title + copy button ───────────────
         Row(children: [
           const Icon(Icons.summarize_rounded,
               color: AppColors.primary, size: 20),
@@ -349,7 +354,6 @@ class _PdfScreenState extends State<PdfScreen>
 
         const Divider(height: 16),
 
-        // ── Doc type badge ───────────────────────────────────────
         if (_docType != null && _docType!.isNotEmpty) ...[
           Container(
             margin: const EdgeInsets.only(bottom: 10),
@@ -373,14 +377,12 @@ class _PdfScreenState extends State<PdfScreen>
           ),
         ],
 
-        // ── Summary text ─────────────────────────────────────────
         Text(_summary!,
             style: GoogleFonts.inter(
                 fontSize: 14, color: AppColors.textDark, height: 1.6)),
 
         const SizedBox(height: 12),
 
-        // ── Chips: chunk count + model used ─────────────────────
         Wrap(spacing: 8, children: [
           _Chip(
               label: '${_chunkCount ?? 0} chunks',
@@ -390,7 +392,6 @@ class _PdfScreenState extends State<PdfScreen>
               color: AppColors.accent),
         ]),
 
-        // ── Export Panel ─────────────────────────────────────────
         if (_fileName != null) ...[
           const SizedBox(height: 16),
           ExportPanel(
