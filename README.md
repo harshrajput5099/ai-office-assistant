@@ -1,6 +1,6 @@
 # 🤖 AI Office Assistant
 
-A fully offline AI-powered mobile app that summarizes PDFs, transcribes meetings, and generates professional emails --- all running on your local machine.
+A fully offline AI-powered mobile app that summarizes PDFs, transcribes meetings, and generates professional emails - all running on your local machine.
 
 ---
 
