@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
+import 'auth_service.dart';
 
 class ApiService {
   static String get baseUrl {
@@ -14,6 +15,7 @@ class ApiService {
     }
     return 'http://192.168.1.8:8000/api';       // Real phone on WiFi
   }
+
   // ─── PDF SUMMARIZATION ────────────────────────────────────────
   static Future<Map<String, dynamic>> summarizePdf(
       Uint8List fileBytes,
@@ -124,5 +126,74 @@ class ApiService {
       final error = jsonDecode(response.body);
       throw Exception(error['detail'] ?? 'PDF export failed');
     }
+  }
+
+  // ─── HISTORY ──────────────────────────────────────────────────
+  static Future<List<dynamic>> getHistory() async {
+    final headers = await AuthService.authHeaders();
+    final res = await http.get(
+      Uri.parse('$baseUrl/history'),
+      headers: headers,
+    );
+    if (res.statusCode == 200) return jsonDecode(res.body) as List;
+    throw Exception(jsonDecode(res.body)['detail'] ?? 'Failed to load history');
+  }
+
+  static Future<void> addHistory({
+    required String type,
+    required String title,
+    required String content,
+  }) async {
+    final headers = await AuthService.authHeaders();
+    await http.post(
+      Uri.parse('$baseUrl/history'),
+      headers: headers,
+      body: jsonEncode({'type': type, 'title': title, 'content': content}),
+    );
+  }
+
+  static Future<void> deleteHistory(int id) async {
+    final headers = await AuthService.authHeaders();
+    await http.delete(
+      Uri.parse('$baseUrl/history/$id'),
+      headers: headers,
+    );
+  }
+
+  // ─── SETTINGS ─────────────────────────────────────────────────
+  static Future<Map<String, dynamic>> getSettings() async {
+    final headers = await AuthService.authHeaders();
+    final res = await http.get(Uri.parse('$baseUrl/settings'), headers: headers);
+    if (res.statusCode == 200) return jsonDecode(res.body);
+    throw Exception('Failed to load settings');
+  }
+
+  static Future<void> updateTheme(String theme) async {
+    final headers = await AuthService.authHeaders();
+    await http.post(
+      Uri.parse('$baseUrl/settings'),
+      headers: headers,
+      body: jsonEncode({'theme': theme}),
+    );
+  }
+
+  static Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    final headers = await AuthService.authHeaders();
+    final res = await http.post(
+      Uri.parse('$baseUrl/settings/change-password'),
+      headers: headers,
+      body: jsonEncode({'current_password': currentPassword, 'new_password': newPassword}),
+    );
+    if (res.statusCode != 200) {
+      throw Exception(jsonDecode(res.body)['detail'] ?? 'Failed to change password');
+    }
+  }
+
+  static Future<void> deleteAccount() async {
+    final headers = await AuthService.authHeaders();
+    await http.delete(Uri.parse('$baseUrl/settings/account'), headers: headers);
   }
 }
