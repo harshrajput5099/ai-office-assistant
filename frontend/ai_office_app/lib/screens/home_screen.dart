@@ -4,6 +4,7 @@ import '../constants/app_colors.dart';
 import 'pdf_screen.dart';
 import 'meeting_screen.dart';
 import 'email_screen.dart';
+import 'pipeline_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -56,6 +57,13 @@ class _HomeScreenState extends State<HomeScreen>
       bgColor: Color(0xFFFDEBD0),
       title: 'Email Generator',
       subtitle: 'Draft professional emails with AI',
+    ),
+    _FeatureData(
+      icon: Icons.auto_awesome,
+      iconColor: Color(0xFF6C3483),
+      bgColor: Color(0xFFE8DAEF),
+      title: 'Smart Pipeline',
+      subtitle: 'Meeting → Summary → Email (Auto)',
     ),
   ];
 
@@ -164,9 +172,12 @@ class _HomeScreenState extends State<HomeScreen>
             } else if (index == 1) {
               Navigator.push(context,
                   MaterialPageRoute(builder: (_) => const MeetingScreen()));
-            } else {
+            } else if (index == 2) {
               Navigator.push(context,
                   MaterialPageRoute(builder: (_) => const EmailScreen()));
+            } else {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => const PipelineScreen()));
             }
           },
         ),
