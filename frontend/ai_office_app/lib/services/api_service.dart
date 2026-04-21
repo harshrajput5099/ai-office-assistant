@@ -196,4 +196,49 @@ class ApiService {
     final headers = await AuthService.authHeaders();
     await http.delete(Uri.parse('$baseUrl/settings/account'), headers: headers);
   }
+
+  // ─── PIPELINE ─────────────────────────────────────────────────
+  // Runs all 3 stages: audio→transcript→summary+extract→email
+  // audioBytes is null when user pastes transcript text instead
+  static Future<Map<String, dynamic>> runPipeline({
+    Uint8List? audioBytes,
+    String? audioFileName,
+    String? transcriptText,
+    String tone = 'formal',
+    String recipientRole = '',
+  }) async {
+    final headers = await AuthService.authHeaders();
+    // Remove Content-Type — multipart sets its own boundary
+    headers.remove('Content-Type');
+
+    final request = http.MultipartRequest(
+      'POST',
+      Uri.parse('$baseUrl/pipeline/run'),
+    );
+    request.headers.addAll(headers);
+    request.fields['tone']           = tone;
+    request.fields['recipient_role'] = recipientRole;
+
+    if (audioBytes != null && audioFileName != null) {
+      // Audio file provided
+      request.files.add(
+        http.MultipartFile.fromBytes('audio', audioBytes, filename: audioFileName),
+      );
+    } else if (transcriptText != null) {
+      // Plain text transcript provided
+      request.fields['transcript_text'] = transcriptText;
+    } else {
+      throw Exception('Provide either audio file or transcript text');
+    }
+
+    final streamed = await request.send().timeout(const Duration(minutes: 5));
+    final body = await streamed.stream.bytesToString();
+
+    if (streamed.statusCode == 200) {
+      return jsonDecode(body) as Map<String, dynamic>;
+    } else {
+      final err = jsonDecode(body);
+      throw Exception(err['detail'] ?? 'Pipeline failed');
+    }
+  }
 }
