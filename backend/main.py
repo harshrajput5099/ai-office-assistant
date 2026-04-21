@@ -1,7 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database import init_db
-from routers import summarize, meeting, email_gen, export, auth, history, settings_router
+from routers import auth, history, settings_router, pipeline
+from routers import summarize, meeting, email_gen, export
+
 
 app = FastAPI(title='AI Office Assistant API', version='1.0.0')
 
@@ -24,6 +26,8 @@ app.include_router(export.router,          prefix='/api', tags=['Export'])
 app.include_router(auth.router,            prefix='/api', tags=['Auth'])
 app.include_router(history.router,         prefix='/api', tags=['History'])
 app.include_router(settings_router.router, prefix='/api', tags=['Settings'])
+app.include_router(pipeline.router,        prefix='/api', tags=['Pipeline'])
+
 
 @app.get('/')
 def health_check():
