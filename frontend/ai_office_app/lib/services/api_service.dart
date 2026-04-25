@@ -4,16 +4,16 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 import 'auth_service.dart';
-
+// 192.168.1.6
 class ApiService {
   static String get baseUrl {
     if (kIsWeb) {
       return 'http://localhost:8000/api';         // Chrome / web browser
     }
     if (Platform.isAndroid) {
-      return 'http://127.0.0.1:8000/api';         // USB debugging (after: adb reverse tcp:8000 tcp:8000)
+      return 'http://192.168.1.6:8000/api';         // USB debugging (after: adb reverse tcp:8000 tcp:8000)
     }
-    return 'http://192.168.1.8:8000/api';         // iOS / WiFi fallback
+    return 'http://192.168.1.6:8000/api';         // iOS / WiFi fallback
   }
 
   // ─── PDF SUMMARIZATION ────────────────────────────────────────
