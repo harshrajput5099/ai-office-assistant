@@ -100,7 +100,6 @@ class _HomeScreenState extends State<HomeScreen>
           ),
         ),
       ]),
-      bottomNavigationBar: _buildBottomNav(),
     );
   }
 
@@ -154,13 +153,14 @@ class _HomeScreenState extends State<HomeScreen>
       tween: Tween(begin: 0, end: 1),
       duration: Duration(milliseconds: 400 + index * 120),
       curve: Curves.easeOut,
-      builder: (context, val, child) => Opacity(
-        opacity: val,
-        child: Transform.translate(
-          offset: Offset(0, 20 * (1 - val)),
-          child: child,
-        ),
-      ),
+      builder: (context, val, child) =>
+          Opacity(
+            opacity: val,
+            child: Transform.translate(
+              offset: Offset(0, 20 * (1 - val)),
+              child: child,
+            ),
+          ),
       child: Padding(
         padding: const EdgeInsets.only(bottom: 12),
         child: _FeatureCard(
@@ -181,60 +181,6 @@ class _HomeScreenState extends State<HomeScreen>
             }
           },
         ),
-      ),
-    );
-  }
-
-  Widget _buildBottomNav() {
-    final items = [
-      {'icon': Icons.home_rounded, 'label': 'Home'},
-      {'icon': Icons.history_rounded, 'label': 'History'},
-      {'icon': Icons.settings_rounded, 'label': 'Settings'},
-    ];
-    return Container(
-      height: 65,
-      decoration: BoxDecoration(
-        color: AppColors.card,
-        boxShadow: [
-          BoxShadow(
-              color: Colors.black.withOpacity(0.08),
-              blurRadius: 12,
-              offset: const Offset(0, -3))
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: items.asMap().entries.map((e) {
-          final isActive = e.key == _selectedNav;
-          return GestureDetector(
-            onTap: () => setState(() => _selectedNav = e.key),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: isActive
-                    ? AppColors.primary.withOpacity(0.1)
-                    : Colors.transparent,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Column(mainAxisSize: MainAxisSize.min, children: [
-                Icon(e.value['icon'] as IconData,
-                    color: isActive ? AppColors.primary : AppColors.textLight,
-                    size: 24),
-                const SizedBox(height: 2),
-                Text(e.value['label'] as String,
-                    style: GoogleFonts.inter(
-                        fontSize: 11,
-                        fontWeight: isActive
-                            ? FontWeight.w600
-                            : FontWeight.normal,
-                        color: isActive
-                            ? AppColors.primary
-                            : AppColors.textLight)),
-              ]),
-            ),
-          );
-        }).toList(),
       ),
     );
   }

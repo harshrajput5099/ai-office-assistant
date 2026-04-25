@@ -8,12 +8,12 @@ import 'auth_service.dart';
 class ApiService {
   static String get baseUrl {
     if (kIsWeb) {
-      return 'http://localhost:8000/api';       // Chrome / web browser
+      return 'http://localhost:8000/api';         // Chrome / web browser
     }
     if (Platform.isAndroid) {
-      return 'http://10.0.2.2:8000/api';        // Android emulator
+      return 'http://127.0.0.1:8000/api';         // USB debugging (after: adb reverse tcp:8000 tcp:8000)
     }
-    return 'http://192.168.1.8:8000/api';       // Real phone on WiFi
+    return 'http://192.168.1.8:8000/api';         // iOS / WiFi fallback
   }
 
   // ─── PDF SUMMARIZATION ────────────────────────────────────────
@@ -55,7 +55,6 @@ class ApiService {
     var body = await response.stream.bytesToString();
     if (response.statusCode == 200) {
       return jsonDecode(body) as Map<String, dynamic>;
-      // Returns: { 'transcript': '...', 'notes': '...', 'language': 'en' }
     } else {
       final error = jsonDecode(body);
       throw Exception(error['detail'] ?? 'Meeting transcription failed');
@@ -83,7 +82,6 @@ class ApiService {
     );
     if (response.statusCode == 200) {
       return jsonDecode(response.body) as Map<String, dynamic>;
-      // Returns: { 'email': '...', 'tone': 'formal' }
     } else {
       final error = jsonDecode(response.body);
       throw Exception(error['detail'] ?? 'Email generation failed');
@@ -198,8 +196,6 @@ class ApiService {
   }
 
   // ─── PIPELINE ─────────────────────────────────────────────────
-  // Runs all 3 stages: audio→transcript→summary+extract→email
-  // audioBytes is null when user pastes transcript text instead
   static Future<Map<String, dynamic>> runPipeline({
     Uint8List? audioBytes,
     String? audioFileName,
@@ -208,7 +204,6 @@ class ApiService {
     String recipientRole = '',
   }) async {
     final headers = await AuthService.authHeaders();
-    // Remove Content-Type — multipart sets its own boundary
     headers.remove('Content-Type');
 
     final request = http.MultipartRequest(
@@ -220,12 +215,10 @@ class ApiService {
     request.fields['recipient_role'] = recipientRole;
 
     if (audioBytes != null && audioFileName != null) {
-      // Audio file provided
       request.files.add(
         http.MultipartFile.fromBytes('audio', audioBytes, filename: audioFileName),
       );
     } else if (transcriptText != null) {
-      // Plain text transcript provided
       request.fields['transcript_text'] = transcriptText;
     } else {
       throw Exception('Provide either audio file or transcript text');
@@ -241,4 +234,4 @@ class ApiService {
       throw Exception(err['detail'] ?? 'Pipeline failed');
     }
   }
-} 
+}
