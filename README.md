@@ -1,171 +1,167 @@
-# 🤖 AI Office Assistant
+🤖 AI Office Assistant
+🚀 Fully Offline AI-Powered Productivity App
+<p align="center"> <img src="https://img.shields.io/badge/AI-Offline%20First-brightgreen?style=for-the-badge" /> <img src="https://img.shields.io/badge/Platform-Android-blue?style=for-the-badge" /> <img src="https://img.shields.io/badge/LLM-Mistral%207B-black?style=for-the-badge" /> <img src="https://img.shields.io/badge/Speech-Whisper-yellow?style=for-the-badge" /> </p>
+🌟 Overview
 
-A fully offline AI-powered mobile app that summarizes PDFs, transcribes meetings, and generates professional emails - all running on your local machine.
+A powerful offline AI assistant that can:
 
----
+📄 Summarize PDFs & documents
+🎙️ Transcribe meetings
+✉️ Generate professional emails
 
-## 📱 Screenshots
+⚡ Runs completely locally — no cloud, no API cost, no data leakage.
 
-| Home Screen | PDF Summarizer | Meeting Notes | Email Generator | Export |
-|---|---|---|---|---|
-| ✅ Working  | ✅ Working | ✅ Working | ✅ Working | ✅ Working  |
-
----
-
-## 🚀 Features
-
-| Feature | Technology | Status |
-|---|---|---|
-| PDF Summarization | T5-small / Mistral 7B | ✅ Working |
-| Meeting Transcription | Whisper (faster-whisper) | ✅ Working |
-| Email Generation | Mistral 7B via Ollama | ✅ Working |
-| Flutter Mobile UI | Flutter + Dart | ✅ Working |
-| Offline Processing | All models run locally | ✅ Working |
-| Export & Share Output | File Export (.txt, .pdf, .docx) | ✅ Working |
-
----
-
-## 🖥️ Tech Stack
-
-- **Frontend**: Flutter (Dart) — Android
-- **Backend**: Python 3.11 + FastAPI + Uvicorn
-- **AI Models**: T5-small, Mistral 7B (via Ollama)
-- **PDF Processing**: pdfplumber + PyMuPDF
-- **Meeting Transcription**: faster-whisper + FFmpeg
-- **Hardware**: NVIDIA RTX 4050 (6GB VRAM), 16GB RAM
-
----
-
-## ⚙️ Setup & Installation
-
-### Prerequisites
-- Python 3.11
-- Flutter SDK
-- NVIDIA GPU (optional but recommended)
-- Ollama (for Mistral features)
-
-### 1. Clone the Repository
-```bash
+🎯 Key Highlights
+🔒 100% Offline AI
+⚡ End-to-End Automation Pipeline
+📱 Mobile-first Flutter UI
+🧠 Local LLM + Speech + NLP integration
+📊 Features
+Feature	Technology	Status
+📄 PDF Summarization	T5-small / Mistral	✅
+🎙️ Meeting Transcription	Whisper + FFmpeg	✅
+✉️ Email Generation	Mistral (Ollama)	✅
+🔁 AI Pipeline	Whisper → T5 → Mistral	✅
+📲 Mobile App	Flutter	✅
+🔐 Authentication	JWT + SQLite	✅
+🕓 History Tracking	SQLite	✅
+⚙️ User Settings	Profile Management	✅
+📤 Export	TXT / PDF / DOCX	✅
+🔒 Offline Mode	Local Models	✅
+🔁 AI Pipeline
+🎤 Audio Input / 📝 Text Input
+            │
+            ▼
+   🧠 Whisper (Transcription)
+            │
+            ▼
+   📄 T5 / Mistral (Summary)
+            │
+            ▼
+   ✉️ Mistral (Email Generation)
+            │
+            ▼
+     📧 Final Email Output
+📡 Endpoint
+POST /api/pipeline/run
+📥 Request Examples
+Voice Input
+{
+  "input_type": "voice",
+  "audio_file": "<file>",
+  "email_tone": "formal"
+}
+Text Input
+{
+  "input_type": "text",
+  "text": "We discussed the Q3 budget...",
+  "email_tone": "semiformal"
+}
+📤 Response
+{
+  "transcript": "...",
+  "summary": "...",
+  "email": "Dear Team..."
+}
+🧠 Tech Stack
+Layer	Technology
+📱 Frontend	Flutter (Dart)
+⚙️ Backend	FastAPI + Python 3.11
+🧠 AI Models	T5-small, Mistral 7B
+🎙️ Speech	faster-whisper
+📄 PDF	pdfplumber, PyMuPDF
+💾 Database	SQLite
+⚡ Server	Uvicorn
+⚙️ Installation
+🔧 Prerequisites
+Python 3.11
+Flutter SDK
+Ollama
+(Optional) NVIDIA GPU
+📥 Clone Repository
 git clone https://github.com/YOUR_USERNAME/ai-office-assistant.git
 cd ai-office-assistant
-```
-
-### 2. Backend Setup
-```bash
+⚙️ Backend Setup
 cd backend
 python -m venv venv
-venv\Scripts\activate        # Windows
+venv\Scripts\activate
 pip install -r requirements.txt
-```
+▶️ Run Backend
+uvicorn main:app --reload
 
-### 3. Run the Backend Server
-```bash
-python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000
-```
+API Docs:
 
-### 4. Flutter Setup
-```bash
+http://localhost:8000/docs
+📱 Flutter Setup
 cd frontend/ai_office_app
-flutter clean
 flutter pub get
 flutter run
-```
 
-### 5. Ollama Setup (for Mistral features)
-```bash
-# Install from https://ollama.ai
+Update API URL in:
+
+lib/services/api_service.dart
+static const String baseUrl = 'http://YOUR_IP:8000/api';
+🤖 Ollama Setup
 ollama pull mistral
 ollama run mistral
-```
-
----
-
-## 📡 API Endpoints
-
-| Method | Endpoint | Description |
-|---|---|---|
-| GET | `/` | Health check |
-| POST | `/api/summarize-pdf` | Summarize PDF (T5 or Mistral) |
-| POST | `/api/transcribe-meeting` | Transcribe audio (Whisper) |
-| POST | `/api/generate-email` | Generate email (Mistral) |
-
-Full API docs at: `http://localhost:8000/docs`
-
----
-
-## 📁 Project Structure
-
-```
+📡 API Modules
+📄 Summarization
+POST /api/summarize-pdf
+POST /api/summarize-document
+🎙️ Meeting
+POST /api/transcribe-meeting
+✉️ Email
+POST /api/generate-email
+🔁 Pipeline
+POST /api/pipeline/run
+📤 Export
+POST /api/export/pdf
+POST /api/export/word
+🔐 Auth
+POST /api/register
+POST /api/login
+🕓 History
+GET /api/history
+POST /api/history
+⚙️ Settings
+GET /api/settings
+POST /api/settings
+📊 Model Comparison
+Model	Speed	Quality	Use Case
+T5-small	Fast	Good	Quick summaries
+Mistral 7B	Slower	Excellent	Emails & deep analysis
+📁 Project Structure
 ai_office_assistant/
 ├── backend/
-│   ├── main.py                  # FastAPI entry point
-│   ├── requirements.txt         # Python dependencies
 │   ├── routers/
-│   │   ├── summarize.py         # PDF summarization
-│   │   ├── meeting.py           # Meeting transcription
-│   │   └── email_gen.py         # Email generation
-│   ├── prompt/
-│   │   └── email_formal.py
-│   │   └── email_friendly.py
-│   │   └── email_semiformal.py
-│   │   └── meeting_notes.py
-│   │   └── summarize_academic.py
-│   │   └── summarise_chunk.py     
-|   ├── models/
-│   │   └── t5_model.py          # T5 model loader
-│   └── utils/
-│       ├── pdf_extractor.py     # PDF text extraction
-│       ├── text_cleaner.py      # Text preprocessing
-│       └── chunker.py           # Text chunking
+│   ├── models/
+│   ├── utils/
+│   └── main.py
 └── frontend/
     └── ai_office_app/
-        └── lib/
-            ├── main.dart
-            ├── screens/
-            │   ├── home_screen.dart
-            │   ├── pdf_screen.dart
-            │   ├── meeting_screen.dart
-            │   └── email_screen.dart
-            └── services/
-                └── api_service.dart
-                └── export_service.dart
-```
+🏗️ Development Progress
+✅ Setup
+✅ Summarization
+✅ Transcription
+✅ Email Generation
+✅ Pipeline
+✅ Auth + History
+✅ Deployment
+🔮 Future Improvements
+🌙 Dark Mode UI
+🌍 Multi-language Support
+📊 Analytics Dashboard
+⚡ Model Optimization
+👨‍💻 Author
 
----
+Harsh Tomar
 
-## 🔧 Configuration
+Capstone project combining AI + Mobile Development + Offline Systems
 
-In `frontend/ai_office_app/lib/services/api_service.dart`:
-```dart
-// Change to your PC's local IP address
-static const String baseUrl = 'http://YOUR_IP:8000/api';
-```
+⭐ Support
 
-Find your IP with: `ipconfig` (Windows)
+If you like this project:
 
----
-
-## 📊 Model Comparison
-
-| Model | Speed | Quality | Use Case |
-|---|---|---|---|
-| T5-small | Fast (2-5s) | Good | Quick summaries |
-| Mistral 7B | Slower (30-60s) | Excellent | Detailed analysis |
-
----
-
-## 🏗️ Build Phases
-
-- **Phase 0** ✅ — Environment setup
-- **Phase 1** ✅ — PDF summarization + Flutter UI
-- **Phase 2** ✅ — Export Summarization (.txt, .pdf, .docx)
-- **Phase 3** ✅ — Meeting transcription (Whisper)
-- **Phase 4** ✅ — Email polish
-- **Phase 5** 🔲 — Deployment
-
----
-
-## 👨‍💻 Author
-
-**Harsh Tomar**
-Built as a capstone project demonstrating offline AI integration with mobile applications.
+⭐ Star the repo
+🍴 Fork it
+🤝 Contribute
